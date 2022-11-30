@@ -1,0 +1,47 @@
+[
+  {
+    "title": "zumba class",
+    "category": "Dancing",
+    "description": "come shake your bum bum",
+    "keywords": "dance, zumba",
+    "dateOfEvent": "2022-12-24T09:30",
+    "location": "Buttes Chaumont",
+    "price": 0
+  },
+  {
+    "title": "react class",
+    "category": "Technology",
+    "description": "come",
+    "keywords": "dance, zumba",
+    "dateOfEvent": "2022-12-24T09:30",
+    "location": "Ironhack",
+    "price": 8000
+  },
+  {
+    "title": "game class",
+    "category": "Games",
+    "description": "come game loser",
+    "keywords": "game, gamer, e-sports",
+    "dateOfEvent": "2022-12-24T09:30",
+    "location": "Sacre Coeur",
+    "price": 50
+  },
+  {
+    "title": "dog class",
+    "category": "Pets & Animals",
+    "description": "come train your dog",
+    "keywords": "bark, dog, woof, train",
+    "dateOfEvent": "2022-12-24T09:30",
+    "location": "Shruti's house",
+    "price": 50
+  },
+  {
+    "title": "how to scream in french class",
+    "category": "Language",
+    "description": "AAAAAA",
+    "keywords": "french, scream",
+    "dateOfEvent": "2022-12-24T09:30",
+    "location": "trocadero",
+    "price": 0
+  }
+]
