@@ -11,6 +11,7 @@ const eventSchema = new Schema(
         "https://www.getillustrations.com/packs/download-simple-colorful-outline-illustrations/scenes/_1x/location%20_%20not%20found,%20missing,%20place,%20destination,%20unknown,%20search,%20find_md.png",
     },
     category: {
+      type: String,
       enum: [
         "Art & Culture",
         "Community & Environment",
@@ -43,7 +44,7 @@ const eventSchema = new Schema(
     },
     time: {
       type: String,
-      required: true,
+      //required: true,
     },
     location: {
       type: String,

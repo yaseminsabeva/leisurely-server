@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const endpoint = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/leisurely";
+const endpoint = process.env.MONGO_URI || "mongodb://127.0.0.1/leisurely";
 
 mongoose
   .connect(endpoint)
