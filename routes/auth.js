@@ -125,4 +125,34 @@ router.get("/me", isAuthenticated, async (req, res, next) => {
   res.status(200).json(user);
 });
 
+router.patch(
+  "/me",
+  uploader.single("picture"),
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      //const user = await User.findById(req.payload.id).select("-password");
+      //res.status(200).json(user);
+      const { id } = req.payload;
+      let picture = req.file?.path;
+      const data = { ...req.body, picture };
+      res
+        .status(200)
+        .json(await User.findByIdAndUpdate(id, data, { new: true }));
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.delete("/me", isAuthenticated, async (req, res, next) => {
+  try {
+    const { id } = req.payload;
+    //console.log(id);
+    res.status(200).json(await User.findByIdAndDelete(id));
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;
