@@ -57,7 +57,7 @@ router.get("/:id/edit", async (req, res, next) => {
     next(error);
   }
 });
-router.patch("/:id/edit", async (req, res, next) => {
+router.patch("/:id/edit", protectRoute, async (req, res, next) => {
   try {
     const { id } = req.params;
     const data = { ...req.body };
@@ -67,6 +67,14 @@ router.patch("/:id/edit", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+router.delete("/", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    res.status(200);
+  } catch (error) {}
 });
 
 router.get("/:id", async (req, res, next) => {
