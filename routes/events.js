@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const mongoose = require("mongoose");
+const protectRoute = require("../middlewares/protectRoute");
 const Event = require("../models/Event.model");
 
 router.get("/", async (req, res, next) => {
@@ -18,20 +19,51 @@ router.get("/add", async (req, res, next) => {
   }
 });
 
-router.post("/add", async (req, res, next) => {
+router.post("/add", protectRoute, async (req, res, next) => {
   try {
-    const { title, category, keywords, dateOfEvent, time, location, price } =
-      req.body;
-    const event = await Event.create({
+    const {
       title,
       category,
+      description,
       keywords,
       dateOfEvent,
       time,
       location,
       price,
+    } = req.body;
+    const event = await Event.create({
+      title,
+      category,
+      description,
+      keywords,
+      dateOfEvent,
+      time,
+      location,
+      price,
+      host: req.currentUser._id,
     });
-    res.status(201).json(event);
+    console.log(event);
+    res.status(201).json({ event });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/:id/edit", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    res.status(200).json(await Event.findById(id));
+  } catch (error) {
+    next(error);
+  }
+});
+router.patch("/:id/edit", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const data = { ...req.body };
+    res
+      .status(200)
+      .json(await Event.findByIdAndUpdate(id, data, { new: true }));
   } catch (error) {
     next(error);
   }
