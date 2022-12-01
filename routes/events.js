@@ -18,6 +18,25 @@ router.get("/add", async (req, res, next) => {
   }
 });
 
+router.post("/add", async (req, res, next) => {
+  try {
+    const { title, category, keywords, dateOfEvent, time, location, price } =
+      req.body;
+    const event = await Event.create({
+      title,
+      category,
+      keywords,
+      dateOfEvent,
+      time,
+      location,
+      price,
+    });
+    res.status(201).json(event);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
