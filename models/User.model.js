@@ -12,7 +12,8 @@ const userSchema = new Schema(
     },
     picture: {
       type: String,
-      default: "put pic later here default",
+      default:
+        "https://soccerpointeclaire.com/wp-content/uploads/2021/06/default-profile-pic-e1513291410505.jpg",
     },
     email: {
       type: String,
@@ -24,6 +25,7 @@ const userSchema = new Schema(
     description: {
       type: String,
       maxLength: 250,
+      //default: "Your description here",
     },
   },
   {

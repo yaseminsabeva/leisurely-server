@@ -23,6 +23,7 @@ app.use(
 
 app.use("/api", require("./routes/index"));
 app.use("/api/auth", require("./routes/auth"));
+app.use("/api/profile", require("./routes/profile"));
 app.use("/api/events", require("./routes/events"));
 
 require("./error-handling/index")(app);
