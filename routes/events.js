@@ -2,6 +2,7 @@ const router = require("express").Router();
 const mongoose = require("mongoose");
 const protectRoute = require("../middlewares/protectRoute");
 const Event = require("../models/Event.model");
+const uploader = require("../config/cloudinary");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -11,35 +12,41 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.post("/", protectRoute, async (req, res, next) => {
-  try {
-    const {
-      title,
-      category,
-      description,
-      keywords,
-      dateOfEvent,
-      time,
-      location,
-      price,
-    } = req.body;
-    const event = await Event.create({
-      title,
-      category,
-      description,
-      keywords,
-      dateOfEvent,
-      time,
-      location,
-      price,
-      host: req.currentUser._id,
-    });
-    console.log(event);
-    res.status(201).json({ event });
-  } catch (error) {
-    next(error);
+router.post(
+  "/",
+  uploader.single("image"),
+  protectRoute,
+  async (req, res, next) => {
+    try {
+      const {
+        title,
+        category,
+        description,
+        keywords,
+        dateOfEvent,
+        time,
+        location,
+        price,
+      } = req.body;
+      const event = await Event.create({
+        title,
+        category,
+        description,
+        keywords,
+        dateOfEvent,
+        time,
+        location,
+        price,
+        host: req.currentUser._id,
+        image: req.file?.path,
+      });
+      console.log(event);
+      res.status(201).json({ event });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 // router.get("/:id", async (req, res, next) => {
 //   try {
@@ -49,17 +56,24 @@ router.post("/", protectRoute, async (req, res, next) => {
 //     next(error);
 //   }
 // });
-router.patch("/:id", protectRoute, async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const data = { ...req.body };
-    res
-      .status(200)
-      .json(await Event.findByIdAndUpdate(id, data, { new: true }));
-  } catch (error) {
-    next(error);
+router.patch(
+  "/:id",
+  uploader.single("image"),
+  protectRoute,
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const image = req.file?.path;
+      const data = { ...req.body, image };
+      console.log(req.body);
+
+      const update = await Event.findByIdAndUpdate(id, data, { new: true });
+      res.status(200).json(update);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 router.delete("/:id", protectRoute, async (req, res, next) => {
   try {
