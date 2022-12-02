@@ -61,6 +61,26 @@ router.patch("/:id", protectRoute, async (req, res, next) => {
   }
 });
 
+//jeanne//
+router.patch("/:id/subscribe", protectRoute, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const currentUserId = req.currentUser.id;
+    res.status(200).json(
+      await Event.findByIdAndUpdate(
+        id,
+        { $push: { attendees: { _id: currentUserId } } },
+        { new: true }
+      )
+        .populate("attendees")
+        .exec()
+    );
+  } catch (error) {
+    next(error);
+  }
+});
+//jeanne//
+
 router.delete("/:id", protectRoute, async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -74,7 +94,7 @@ router.delete("/:id", protectRoute, async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
-    res.status(200).json(await Event.findById(id).populate("host"));
+    res.status(200).json(await Event.findById(id).populate("host attendees"));
   } catch (error) {
     next(error);
   }
