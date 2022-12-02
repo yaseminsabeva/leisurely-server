@@ -11,15 +11,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/add", async (req, res, next) => {
-  try {
-    res.status(200);
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.post("/add", protectRoute, async (req, res, next) => {
+router.post("/", protectRoute, async (req, res, next) => {
   try {
     const {
       title,
