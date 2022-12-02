@@ -49,15 +49,15 @@ router.post("/add", protectRoute, async (req, res, next) => {
   }
 });
 
-router.get("/:id/edit", async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    res.status(200).json(await Event.findById(id));
-  } catch (error) {
-    next(error);
-  }
-});
-router.patch("/:id/edit", protectRoute, async (req, res, next) => {
+// router.get("/:id", async (req, res, next) => {
+//   try {
+//     const { id } = req.params;
+//     res.status(200).json(await Event.findById(id));
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+router.patch("/:id", protectRoute, async (req, res, next) => {
   try {
     const { id } = req.params;
     const data = { ...req.body };
@@ -69,12 +69,14 @@ router.patch("/:id/edit", protectRoute, async (req, res, next) => {
   }
 });
 
-router.delete("/", async (req, res, next) => {
+router.delete("/:id", protectRoute, async (req, res, next) => {
   try {
     const { id } = req.params;
-
-    res.status(200);
-  } catch (error) {}
+    console.log(id);
+    res.status(200).json(await Event.findByIdAndDelete(id));
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.get("/:id", async (req, res, next) => {
