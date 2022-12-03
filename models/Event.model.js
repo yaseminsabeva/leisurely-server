@@ -60,6 +60,11 @@ const eventSchema = new Schema(
         ref: "User",
       },
     ],
+    maxAttendees: {
+      type: Number,
+      default: 15,
+      //required: true,
+    },
     price: {
       type: Number,
       required: true,
