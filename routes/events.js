@@ -68,19 +68,19 @@ router.post(
   }
 );
 
-router.post("/search", async (req, res, next) => {
-  try {
-    const { searchData } = req.body;
-    console.log(searchData);
-    const foundEvent = await Event.find({
-      title: { $regex: searchData, $options: "i" },
-    });
-    res.status(201).json({ foundEvent });
-    console.log(foundEvent);
-  } catch (error) {
-    next(error);
-  }
-});
+// router.post("/search", async (req, res, next) => {
+//   try {
+//     const { searchData } = req.body;
+//     console.log(searchData);
+//     const foundEvent = await Event.find({
+//       title: { $regex: searchData, $options: "i" },
+//     });
+//     res.status(201).json({ foundEvent });
+//     console.log(foundEvent);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 // router.get("/:id", async (req, res, next) => {
 //   try {
