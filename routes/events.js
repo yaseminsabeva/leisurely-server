@@ -6,23 +6,28 @@ const uploader = require("../config/cloudinary");
 router.get("/", async (req, res, next) => {
   const filters = {};
 
-  if (req.query?.title || req.query?.checkers) {
-    const and = [];
+  const and = [];
 
-    if (req.query?.title)
-      and.push({ title: { $regex: req.query.title, $options: "i" } });
+  if (req.query?.title)
+    and.push({ title: { $regex: req.query.title, $options: "i" } });
 
-    if (req.query?.checkers) {
-      const checkers = JSON.parse(req.query.checkers);
-      const or = [];
-      for (const key in checkers) {
-        if (checkers[key]) or.push({ category: key });
-      }
-      if (or.length) and.push({ $or: or });
+  if (req.query?.checkers) {
+    const checkers = JSON.parse(req.query.checkers);
+    const or = [];
+    for (const key in checkers) {
+      if (checkers[key]) or.push({ category: key });
     }
-
-    if (and.length) filters.$and = and;
+    if (or.length) and.push({ $or: or });
   }
+
+  if (req.query?.startDate)
+    and.push({ dateOfEvent: { $gte: req.query.startDate } });
+
+  if (req.query?.endDate)
+    and.push({ dateOfEvent: { $lte: req.query.endDate } });
+
+  //chain filter conditions before this line
+  if (and.length) filters.$and = and;
 
   try {
     res.status(200).json(await Event.find(filters));
