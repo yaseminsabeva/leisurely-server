@@ -48,6 +48,17 @@ router.post(
   }
 );
 
+router.post("/search", async (req, res, next) => {
+  try {
+    const { data } = req.body;
+    console.log(data);
+    //const foundEvent = await Event.find({ data: { $regex: data } });
+    // console.log(foundEvent);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // router.get("/:id", async (req, res, next) => {
 //   try {
 //     const { id } = req.params;
