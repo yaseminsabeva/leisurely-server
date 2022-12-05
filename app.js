@@ -23,6 +23,7 @@ app.use(
 
 app.use("/api", require("./routes/index"));
 app.use("/api/auth", require("./routes/auth"));
+app.use("/api/search", require("./routes/search"));
 app.use("/api/profile", require("./routes/profile"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/events", require("./routes/events"));
