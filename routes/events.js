@@ -5,8 +5,22 @@ const Event = require("../models/Event.model");
 const uploader = require("../config/cloudinary");
 
 router.get("/", async (req, res, next) => {
+  console.log(req.query);
+  const filters = { $or: [] };
+  if (req.query?.checkers) {
+    const checkers = JSON.parse(req.query.checkers);
+    for (const key in checkers) {
+      if (checkers[key]) {
+        filters.$or.push({ category: key });
+      }
+    }
+  }
   try {
-    res.status(200).json(await Event.find());
+    if (filters.$or.length) {
+      res.status(200).json(await Event.find(filters));
+    } else {
+      res.status(200).json(await Event.find());
+    }
   } catch (error) {
     next(error);
   }
@@ -48,14 +62,6 @@ router.post(
   }
 );
 
-// router.get("/:id", async (req, res, next) => {
-//   try {
-//     const { id } = req.params;
-//     res.status(200).json(await Event.findById(id));
-//   } catch (error) {
-//     next(error);
-//   }
-// });
 router.patch(
   "/:id",
   uploader.single("image"),
