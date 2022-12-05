@@ -5,21 +5,27 @@ const Event = require("../models/Event.model");
 const uploader = require("../config/cloudinary");
 
 router.get("/", async (req, res, next) => {
-  console.log(req.query);
-  const filters = { $or: [] };
+  if (!req.query.title && !req.query.checkers) {
+    return res.status(200).json(await Event.find());
+  }
+  const filters = { $and: [{ $or: [] }] };
+  if (req.query?.title) {
+    filters.$and.push({ title: { $regex: req.query.title, $options: "i" } });
+  }
   if (req.query?.checkers) {
     const checkers = JSON.parse(req.query.checkers);
     for (const key in checkers) {
       if (checkers[key]) {
-        filters.$or.push({ category: key });
+        filters.$and[0].$or.push({ category: key });
       }
     }
   }
   try {
-    if (filters.$or.length) {
+    if (!filters.$and[0].$or.length) {
+      filters.$and.shift();
       res.status(200).json(await Event.find(filters));
     } else {
-      res.status(200).json(await Event.find());
+      res.status(200).json(await Event.find(filters));
     }
   } catch (error) {
     next(error);
