@@ -1,32 +1,36 @@
 const router = require("express").Router();
-const mongoose = require("mongoose");
 const protectRoute = require("../middlewares/protectRoute");
 const Event = require("../models/Event.model");
 const uploader = require("../config/cloudinary");
 
 router.get("/", async (req, res, next) => {
-  if (!req.query.title && !req.query.checkers) {
-    return res.status(200).json(await Event.find());
-  }
-  const filters = { $and: [{ $or: [] }] };
-  if (req.query?.title) {
-    filters.$and.push({ title: { $regex: req.query.title, $options: "i" } });
-  }
+  const filters = {};
+
+  const and = [];
+
+  if (req.query?.title)
+    and.push({ title: { $regex: req.query.title, $options: "i" } });
+
   if (req.query?.checkers) {
     const checkers = JSON.parse(req.query.checkers);
+    const or = [];
     for (const key in checkers) {
-      if (checkers[key]) {
-        filters.$and[0].$or.push({ category: key });
-      }
+      if (checkers[key]) or.push({ category: key });
     }
+    if (or.length) and.push({ $or: or });
   }
+
+  if (req.query?.startDate)
+    and.push({ dateOfEvent: { $gte: req.query.startDate } });
+
+  if (req.query?.endDate)
+    and.push({ dateOfEvent: { $lte: req.query.endDate } });
+
+  //chain filter conditions before this line
+  if (and.length) filters.$and = and;
+
   try {
-    if (!filters.$and[0].$or.length) {
-      filters.$and.shift();
-      res.status(200).json(await Event.find(filters));
-    } else {
-      res.status(200).json(await Event.find(filters));
-    }
+    res.status(200).json(await Event.find(filters));
   } catch (error) {
     next(error);
   }
@@ -67,29 +71,6 @@ router.post(
     }
   }
 );
-
-// router.post("/search", async (req, res, next) => {
-//   try {
-//     const { searchData } = req.body;
-//     console.log(searchData);
-//     const foundEvent = await Event.find({
-//       title: { $regex: searchData, $options: "i" },
-//     });
-//     res.status(201).json({ foundEvent });
-//     console.log(foundEvent);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
-// router.get("/:id", async (req, res, next) => {
-//   try {
-//     const { id } = req.params;
-//     res.status(200).json(await Event.findById(id));
-//   } catch (error) {
-//     next(error);
-//   }
-// });
 
 router.patch(
   "/:id",
