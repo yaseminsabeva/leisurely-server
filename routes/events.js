@@ -67,6 +67,11 @@ router.post(
         res.status(400).json({ message: "Please fill the required fields." });
         return;
       }
+      const todaysDate = new Date();
+      if (dateOfEvent < Intl.DateTimeFormat("sv-SE").format(todaysDate)) {
+        res.status(400).json({ message: "Please enter a valid date." });
+        return;
+      }
 
       const event = await Event.create({
         title,
@@ -96,6 +101,35 @@ router.patch(
   uploader.single("image"),
   protectRoute,
   async (req, res, next) => {
+    const {
+      title,
+      category,
+      description,
+      keywords,
+      dateOfEvent,
+      time,
+      location,
+      price,
+    } = req.body;
+
+    if (
+      title === "" ||
+      category === "" ||
+      description === "" ||
+      keywords === "" ||
+      dateOfEvent === "" ||
+      time === "" ||
+      location === "" ||
+      price === ""
+    ) {
+      res.status(400).json({ message: "Please fill the required fields." });
+      return;
+    }
+    const todaysDate = new Date();
+    if (dateOfEvent < Intl.DateTimeFormat("sv-SE").format(todaysDate)) {
+      res.status(400).json({ message: "Please enter a valid date." });
+      return;
+    }
     try {
       const { id } = req.params;
       const image = req.file?.path;
@@ -105,7 +139,10 @@ router.patch(
       const update = await Event.findByIdAndUpdate(id, data, { new: true });
       res.status(200).json(update);
     } catch (error) {
-      next(error);
+      if (error instanceof mongoose.Error.ValidationError) {
+        return res.status(400).json({ message: error.message });
+      }
+      res.status(500).json({ message: "Something went terribly wrong." });
     }
   }
 );
