@@ -30,7 +30,7 @@ router.get("/", async (req, res, next) => {
   if (and.length) filters.$and = and;
 
   try {
-    res.status(200).json(await Event.find(filters));
+    res.status(200).json(await Event.find(filters).sort({ _id: -1 }));
   } catch (error) {
     next(error);
   }
