@@ -31,7 +31,7 @@ async function seed() {
   await cleanDatabase();
   const eventsWithId = await createUser();
   await Event.create(eventsWithId);
-
+  console.log("==========");
   process.exit();
 }
 
