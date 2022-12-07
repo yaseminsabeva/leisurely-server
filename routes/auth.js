@@ -20,31 +20,26 @@ router.post("/signup", uploader.single("picture"), async (req, res, next) => {
   if (req.file) {
     picture = req.file.path;
   }
-  if (email === "" || name === "" || password === "") {
-    res
-      .status(400)
-      .json({ message: "I need some informations to work with here!" });
+  if (email === "" || name === "" || username === "" || password === "") {
+    res.status(400).json({ message: "Please fill in the required fields." });
+    return;
   }
 
-  // ! To use only if you want to enforce strong password (not during dev-time)
+  const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
 
-  // const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
-
-  // if (!regex.test(password)) {
-  // 	return res
-  // 		.status(400)
-  // 		.json({
-  // 			message:
-  // 				"Password needs to have at least 8 chars and must contain at least one number, one lowercase and one uppercase letter.",
-  // 		});
-  // }
+  if (!regex.test(password)) {
+    return res.status(400).json({
+      message:
+        "Password needs to have at least 8 characterss and must contain at least one number, one lowercase and one uppercase letter.",
+    });
+  }
 
   try {
-    const foundUser = await User.findOne({ email });
+    const foundUser = await User.findOne({ $or: [{ email }, { username }] });
     if (foundUser) {
       res
         .status(400)
-        .json({ message: "There's another one of you, somewhere." });
+        .json({ message: "Email and username need to be unique." });
       return;
     }
     const salt = bcrypt.genSaltSync(saltRounds);
@@ -58,32 +53,29 @@ router.post("/signup", uploader.single("picture"), async (req, res, next) => {
       description,
       picture,
     });
-    console.log(createdUser);
 
     const user = createdUser.toObject();
     delete user.password;
     // ! Sending the user as json to the client
     res.status(201).json({ user });
   } catch (error) {
-    console.log(error);
     if (error instanceof mongoose.Error.ValidationError) {
       return res.status(400).json({ message: error.message });
     }
-    res.status(500).json({ message: "Sweet, sweet 500." });
+    res.status(500).json({ message: "Something went terribly wrong." });
   }
 });
 
 router.post("/signin", async (req, res, next) => {
   const { email, password } = req.body;
   if (email === "" || password === "") {
-    res
-      .status(400)
-      .json({ message: "I need some informations to work with here!" });
+    res.status(400).json({ message: "Please fill in the required fields." });
+    return;
   }
   try {
     const foundUser = await User.findOne({ email });
     if (!foundUser) {
-      res.status.apply(401).json({ message: "You're not yourself." });
+      res.status(401).json({ message: "Wrong credentials" });
       return;
     }
     const goodPass = bcrypt.compareSync(password, foundUser.password);
@@ -91,32 +83,20 @@ router.post("/signin", async (req, res, next) => {
       const user = foundUser.toObject();
       delete user.password;
 
-      /**
-       * Sign method allow you to create the token.
-       *
-       * ---
-       *
-       * - First argument: user, should be an object. It is our payload !
-       * - Second argument: A-really-long-random-string...
-       * - Third argument: Options...
-       */
-
       const authToken = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET, {
         algorithm: "HS256",
         expiresIn: "2d",
       });
 
-      //! Sending the authToken to the client !
-
       res.status(200).json({ authToken });
     } else {
-      res.status(401).json("Can you check your typos ?");
+      res.status(401).json({ message: "Wrong credentials." });
     }
   } catch (error) {
-    console.log(error);
-    res
-      .status(500)
-      .json({ message: "Oh noes ! Something went terribly wrong !" });
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).json({ message: error.message });
+    }
+    res.status(500).json({ message: "Something went terribly wrong." });
   }
 });
 
