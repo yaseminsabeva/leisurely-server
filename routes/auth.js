@@ -25,12 +25,21 @@ router.post("/signup", uploader.single("picture"), async (req, res, next) => {
     return;
   }
 
-  const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
+  const regexPw = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
 
-  if (!regex.test(password)) {
+  const regexUsername = /^[a-z0-9_.]+$/;
+
+  if (!regexPw.test(password)) {
     return res.status(400).json({
       message:
-        "Password needs to have at least 8 characterss and must contain at least one number, one lowercase and one uppercase letter.",
+        "Password needs to have at least 8 characters and must contain at least one number, one lowercase and one uppercase letter.",
+    });
+  }
+
+  if (!regexUsername.test(username)) {
+    return res.status(400).json({
+      message:
+        "Usernames can only use letters, numbers, underscores, and periods.",
     });
   }
 

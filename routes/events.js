@@ -2,6 +2,7 @@ const router = require("express").Router();
 const protectRoute = require("../middlewares/protectRoute");
 const Event = require("../models/Event.model");
 const uploader = require("../config/cloudinary");
+const mongoose = require("mongoose");
 
 router.get("/", async (req, res, next) => {
   const filters = {};
@@ -52,6 +53,21 @@ router.post(
         location,
         price,
       } = req.body;
+
+      if (
+        title === "" ||
+        category === "" ||
+        description === "" ||
+        keywords === "" ||
+        dateOfEvent === "" ||
+        time === "" ||
+        location === "" ||
+        price === ""
+      ) {
+        res.status(400).json({ message: "Please fill the required fields." });
+        return;
+      }
+
       const event = await Event.create({
         title,
         category,
@@ -67,7 +83,10 @@ router.post(
       console.log(event);
       res.status(201).json({ event });
     } catch (error) {
-      next(error);
+      if (error instanceof mongoose.Error.ValidationError) {
+        return res.status(400).json({ message: error.message });
+      }
+      res.status(500).json({ message: "Something went terribly wrong." });
     }
   }
 );
