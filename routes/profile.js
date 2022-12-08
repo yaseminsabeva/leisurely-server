@@ -6,7 +6,6 @@ const Event = require("../models/Event.model");
 const User = require("../models/User.model");
 
 router.get("/me", isAuthenticated, async (req, res, next) => {
-  //console.log("req payload", req.payload);
   const user = await User.findById(req.payload.id).select("-password");
   res.status(200).json(user);
 });
@@ -59,7 +58,6 @@ router.patch(
 router.delete("/me", isAuthenticated, async (req, res, next) => {
   try {
     const { id } = req.payload;
-    //console.log(id);
     res.status(200).json(await User.findByIdAndDelete(id));
   } catch (error) {
     next(error);
