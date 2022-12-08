@@ -10,10 +10,12 @@ An events site made during week 9 of Ironhack's Web Development bootcamp as the 
 
 ## About Implementation
 
+- React frontend
+- Express backend
 - A document based database hosted on MongoDB Atlas.
 - JWT for authentication.
-- Netlify for Frontend deployment.
-- Render for Backend deployment.
+- Netlify for frontend deployment.
+- Render for backend deployment.
 
 ## What could be next?
 
