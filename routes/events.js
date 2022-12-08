@@ -152,7 +152,11 @@ router.patch(
       const data = { ...req.body, image };
       console.log(req.body);
 
-      const update = await Event.findByIdAndUpdate(id, data, { new: true });
+      const update = await Event.findOneAndUpdate(
+        { _id: id, host: req.currentUser.id },
+        data,
+        { new: true }
+      );
       res.status(200).json(update);
     } catch (error) {
       if (error instanceof mongoose.Error.ValidationError) {
@@ -163,7 +167,6 @@ router.patch(
   }
 );
 
-//jeanne//
 router.patch("/:id/subscribe", protectRoute, async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -181,13 +184,12 @@ router.patch("/:id/subscribe", protectRoute, async (req, res, next) => {
     next(error);
   }
 });
-//jeanne//
 
 router.delete("/:id", protectRoute, async (req, res, next) => {
   try {
     const { id } = req.params;
-    console.log(id);
-    res.status(200).json(await Event.findByIdAndDelete(id));
+    await Event.findOneAndDelete({ _id: id, host: req.currentUser.id });
+    res.sendStatus(204);
   } catch (error) {
     next(error);
   }
