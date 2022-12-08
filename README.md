@@ -4,7 +4,7 @@ An events site made during week 9 of Ironhack's Web Development bootcamp as the 
 
 #### In collaboration with:
 
-- [Jeanne](https://github.com/jannnitto/)
+- [Jeanne](https://github.com/Janittto)
 - [Shruti](https://github.com/Sshaker2/)
 - [Yasemin](https://github.com/yaseminsabeva/)
 
