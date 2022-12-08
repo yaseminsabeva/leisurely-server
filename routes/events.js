@@ -68,8 +68,16 @@ router.post(
         return;
       }
       const todaysDate = new Date();
-      if (dateOfEvent < Intl.DateTimeFormat("sv-SE").format(todaysDate)) {
-        res.status(400).json({ message: "Please enter a valid date." });
+      const futureDate = new Date();
+      futureDate.setFullYear(futureDate.getFullYear() + 1);
+      if (
+        dateOfEvent < Intl.DateTimeFormat("sv-SE").format(todaysDate) ||
+        dateOfEvent > Intl.DateTimeFormat("sv-SE").format(futureDate)
+      ) {
+        res.status(400).json({
+          message:
+            "Event date cannot be in the past or later than one year in the future.",
+        });
         return;
       }
 
