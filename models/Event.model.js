@@ -44,7 +44,7 @@ const eventSchema = new Schema(
     },
     time: {
       type: String,
-      //required: true,
+      required: true,
     },
     location: {
       type: String,
@@ -63,7 +63,6 @@ const eventSchema = new Schema(
     maxAttendees: {
       type: Number,
       default: 15,
-      //required: true,
     },
     price: {
       type: Number,
